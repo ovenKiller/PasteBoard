@@ -46,6 +46,7 @@ def main():
 
 def run(rank, n_gpus, hps):
     global global_step
+    print("function run() is envoked")
     if rank == 0:
         logger = utils.get_logger(hps.model_dir)
         logger.info(hps)
@@ -112,7 +113,7 @@ def run(rank, n_gpus, hps):
     scheduler_d = torch.optim.lr_scheduler.ExponentialLR(optim_d, gamma=hps.train.lr_decay, last_epoch=epoch_str - 2)
 
     scaler = GradScaler(enabled=hps.train.fp16_run)
-
+    print("function run() : start training")
     for epoch in range(epoch_str, hps.train.epochs + 1):
         # set up warm-up learning rate
         if epoch <= warmup_epoch:
@@ -262,7 +263,7 @@ def train_and_evaluate(rank, epoch, hps, nets, optims, schedulers, scaler, loade
                 keep_ckpts = getattr(hps.train, 'keep_ckpts', 0)
                 if keep_ckpts > 0:
                     utils.clean_checkpoints(path_to_models=hps.model_dir, n_ckpts_to_keep=keep_ckpts, sort_by_time=True)
-
+        print("global_step"+str(global_step))
         global_step += 1
 
     if rank == 0:
